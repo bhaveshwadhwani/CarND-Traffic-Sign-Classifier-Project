@@ -28,7 +28,7 @@ The goals / steps of this project are the following:
 [image7]: ./examples/test_images.png "Test images from internet"
 [image8]: ./examples/test_images_pics.png "Test images with softmax"
 [image9]: ./examples/feature_maps.png "Feature Maps"
-[image10]: ./examples/feature_maps_part2.png "Feature Maps Layer 2"
+[image10]: ./examples/feature_maps_part2.png "Feature_Maps_Layer_2"
 
 
 
@@ -339,7 +339,8 @@ First convolutional layer
 
 Second convolutional layer
 
-![Feature Maps Layer2][image10]
+![Feature_Maps_Layer2][image10]
+
 This is image for Speed limit (120km/h) . We can clearly see in first layer the circle is getting recognised and 120 is very reccognised .
 While layer 2 focuses on edges and pixels of 1 direction in particularly . By this we can understand how the nueral network is working by collecting iformation from different structures and parts of image .
 
