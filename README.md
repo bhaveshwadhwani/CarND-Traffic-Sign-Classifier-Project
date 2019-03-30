@@ -7,7 +7,7 @@ In this project, you will use what you've learned about deep neural networks and
 
 Link for [Ipython notebook](https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project/blob/master/Traffic_Sign_Classifier.ipynb). 
 
-Link for [writeup](https://github.com/bhaveshwadhwani/CarND-Traffic-Sign-Classifier-Project/blob/master/writeup_template.md) for this project 
+Link for [writeup](https://github.com/bhaveshwadhwani/CarND-Traffic-Sign-Classifier-Project/blob/master/writeup.md) for this project 
 
 To meet specifications, the project will require submitting three files: 
 * the Ipython notebook with the code

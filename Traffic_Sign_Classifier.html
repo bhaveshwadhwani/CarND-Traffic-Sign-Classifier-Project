@@ -15671,6 +15671,185 @@ Test Set Accuracy = 1.000
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">### Visualize the softmax probabilities here.</span>
+<span class="c1">### Feel free to use as many code cells as needed.</span>
+
+<span class="n">softmax_logits</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">logits</span><span class="p">)</span>
+<span class="n">top_k</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">top_k</span><span class="p">(</span><span class="n">softmax_logits</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">name_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="s1">&#39;signnames.csv&#39;</span><span class="p">,</span> <span class="n">skip_header</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;myint&#39;</span><span class="p">,</span><span class="s1">&#39;i8&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;mysring&#39;</span><span class="p">,</span><span class="s1">&#39;S55&#39;</span><span class="p">)],</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+<span class="n">my_labels</span> <span class="o">=</span> <span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">18</span> <span class="p">,</span> <span class="mi">34</span><span class="p">,</span>  <span class="mi">11</span><span class="p">,</span> <span class="mi">38</span><span class="p">,</span> <span class="mi">1</span> <span class="p">]</span>
+
+<span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span> <span class="k">as</span> <span class="n">sess</span><span class="p">:</span>
+    <span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">global_variables_initializer</span><span class="p">())</span>
+    <span class="n">saver</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">import_meta_graph</span><span class="p">(</span><span class="s1">&#39;./lenet.meta&#39;</span><span class="p">)</span>
+    <span class="n">saver</span><span class="o">.</span><span class="n">restore</span><span class="p">(</span><span class="n">sess</span><span class="p">,</span> <span class="s2">&quot;./lenet&quot;</span><span class="p">)</span>
+    <span class="n">my_softmax_logits</span> <span class="o">=</span> <span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">softmax_logits</span><span class="p">,</span> <span class="n">feed_dict</span><span class="o">=</span><span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="n">my_images_normalized</span><span class="p">,</span> <span class="n">keep_prob</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">})</span>
+    <span class="n">my_top_k</span> <span class="o">=</span> <span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">top_k</span><span class="p">,</span> <span class="n">feed_dict</span><span class="o">=</span><span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="n">my_images_normalized</span><span class="p">,</span> <span class="n">keep_prob</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">})</span>
+
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">image</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">my_images</span><span class="p">):</span>
+        <span class="n">input_image_label</span> <span class="o">=</span> <span class="n">name_values</span><span class="p">[</span><span class="n">my_labels</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Input Image label &quot;</span><span class="p">,</span><span class="n">input_image_label</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">40</span><span class="p">)</span>
+        <span class="n">guess1</span> <span class="o">=</span> <span class="n">my_top_k</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">label1</span> <span class="o">=</span> <span class="n">name_values</span><span class="p">[</span><span class="n">guess1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
+        <span class="n">str1</span> <span class="o">=</span><span class="s2">&quot;1st Guess :&quot;</span><span class="o">+</span> <span class="n">label1</span><span class="o">+</span><span class="s2">&quot;(&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">guess1</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">my_top_k</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">])[:</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span><span class="s2">&quot;%</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">str1</span><span class="p">)</span>
+        <span class="n">guess2</span> <span class="o">=</span> <span class="n">my_top_k</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">label2</span> <span class="o">=</span> <span class="n">name_values</span><span class="p">[</span><span class="n">guess2</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
+        <span class="n">str2</span> <span class="o">=</span><span class="s2">&quot;2nd Guess :&quot;</span><span class="o">+</span> <span class="n">label2</span><span class="o">+</span><span class="s2">&quot;(&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">guess2</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">my_top_k</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">])[:</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span><span class="s2">&quot;%</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">str2</span><span class="p">)</span>
+        <span class="n">guess3</span> <span class="o">=</span> <span class="n">my_top_k</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">label3</span> <span class="o">=</span> <span class="n">name_values</span><span class="p">[</span><span class="n">guess3</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
+        <span class="n">str3</span> <span class="o">=</span><span class="s2">&quot;3rd Guess :&quot;</span><span class="o">+</span> <span class="n">label3</span><span class="o">+</span><span class="s2">&quot;(&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">guess3</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">my_top_k</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="mi">2</span><span class="p">])[:</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span><span class="s2">&quot;%</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">str3</span><span class="p">)</span>
+        <span class="n">guess4</span> <span class="o">=</span> <span class="n">my_top_k</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">label4</span> <span class="o">=</span> <span class="n">name_values</span><span class="p">[</span><span class="n">guess3</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
+        <span class="n">str4</span> <span class="o">=</span><span class="s2">&quot;4th Guess :&quot;</span><span class="o">+</span> <span class="n">label3</span><span class="o">+</span><span class="s2">&quot;(&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">guess3</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">my_top_k</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="mi">3</span><span class="p">])[:</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span><span class="s2">&quot;%</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">str4</span><span class="p">)</span>
+        <span class="n">guess5</span> <span class="o">=</span> <span class="n">my_top_k</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="mi">4</span><span class="p">]</span>
+        <span class="n">label5</span> <span class="o">=</span> <span class="n">name_values</span><span class="p">[</span><span class="n">guess3</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
+        <span class="n">str5</span> <span class="o">=</span><span class="s2">&quot;5th Guess :&quot;</span><span class="o">+</span> <span class="n">label3</span><span class="o">+</span><span class="s2">&quot;(&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">guess3</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">my_top_k</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="mi">4</span><span class="p">])[:</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span><span class="s2">&quot;%</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">str5</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">40</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>INFO:tensorflow:Restoring parameters from ./lenet
+Input Image label  (12, b&#39;Priority road&#39;)
+----------------------------------------
+1st Guess :Priority road(12)
+100.%
+
+2nd Guess :Roundabout mandatory(40)
+4.73%
+
+3rd Guess :Turn left ahead(34)
+3.57%
+
+4th Guess :Turn left ahead(34)
+5.15%
+
+5th Guess :Turn left ahead(34)
+1.78%
+
+----------------------------------------
+Input Image label  (18, b&#39;General caution&#39;)
+----------------------------------------
+1st Guess :General caution(18)
+100.%
+
+2nd Guess :Pedestrians(27)
+1.05%
+
+3rd Guess :Traffic signals(26)
+3.83%
+
+4th Guess :Traffic signals(26)
+1.98%
+
+5th Guess :Traffic signals(26)
+0.0%
+
+----------------------------------------
+Input Image label  (34, b&#39;Turn left ahead&#39;)
+----------------------------------------
+1st Guess :Turn left ahead(34)
+100.%
+
+2nd Guess :Keep right(38)
+5.50%
+
+3rd Guess :No vehicles(15)
+4.81%
+
+4th Guess :No vehicles(15)
+1.16%
+
+5th Guess :No vehicles(15)
+2.79%
+
+----------------------------------------
+Input Image label  (11, b&#39;Right-of-way at the next intersection&#39;)
+----------------------------------------
+1st Guess :Right-of-way at the next intersection(11)
+100.%
+
+2nd Guess :Beware of ice/snow(30)
+1.14%
+
+3rd Guess :Double curve(21)
+6.98%
+
+4th Guess :Double curve(21)
+1.56%
+
+5th Guess :Double curve(21)
+5.58%
+
+----------------------------------------
+Input Image label  (38, b&#39;Keep right&#39;)
+----------------------------------------
+1st Guess :Keep right(38)
+100.%
+
+2nd Guess :Turn left ahead(34)
+2.24%
+
+3rd Guess :Speed limit (20km/h)(0)
+0.0%
+
+4th Guess :Speed limit (20km/h)(0)
+0.0%
+
+5th Guess :Speed limit (20km/h)(0)
+0.0%
+
+----------------------------------------
+Input Image label  (1, b&#39;Speed limit (30km/h)&#39;)
+----------------------------------------
+1st Guess :Speed limit (30km/h)(1)
+98.5%
+
+2nd Guess :Speed limit (20km/h)(0)
+1.43%
+
+3rd Guess :Speed limit (80km/h)(5)
+1.14%
+
+4th Guess :Speed limit (80km/h)(5)
+6.76%
+
+5th Guess :Speed limit (80km/h)(5)
+1.87%
+
+----------------------------------------
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
 <div class="prompt input_prompt">In&nbsp;[48]:</div>
 <div class="inner_cell">
     <div class="input_area">
