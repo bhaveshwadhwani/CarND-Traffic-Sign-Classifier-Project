@@ -25,13 +25,14 @@ The goals / steps of this project are the following:
 [image4]: ./examples/Grayscale.png "Grayscale Image"
 [image5]: ./examples/augmented_data.png "augmented_data"
 [image6]: ./examples/warped.png "Warped image"
-[image7]: ./examples/test_images.png "Test images from internet"
-[image8]: ./examples/test_images_pics.png "Test images with softmax"
+[image7]: ./examples/internet_images.png "Test images from internet"
+[image8]: ./examples/images_with_top3.png "Test images with softmax"
 [image9]: ./examples/feature_maps.png "Feature Maps"
 [image10]: ./examples/feature_maps_part2.png "Feature_Maps_Layer_2"
-
-
-
+[image11]: ./examples/chart_softmax.png "Test images with softmax Chart"
+[image12]: ./examples/modifiedLeNet.jpeg "Architechture Diagram"
+[image13]: ./examples/LeNet_Original_Image.jpg "LeNet_OriginalArchitechture Diagram"
+[image14]: ./examples/final_tuned.png "Tuned Model Accuracy plot"
 
 ## Rubric Points
 ### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
@@ -110,6 +111,7 @@ Warped Image:
 
 #### 2. Describe what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
 
+
 My final model consisted of the following layers:
 
 
@@ -152,6 +154,16 @@ My final model consisted of the following layers:
 
 **Layer 4: Fully Connected (Logits).** This should have 43 outputs.
 
+Architechture Daigram :
+---
+Here is diagram of architecture used in this project . It is modified LeNet architecture which is based on LeNet architecture which was designed was Yann LeCun in late 1980's . You can get a breif overview over [here](http://yann.lecun.com/exdb/lenet/) 
+
+![Architechture Diagram][image12]
+
+Here we have original Lenet architecture .
+
+![LeNet_OriginalArchitechture Diagram][image13]
+
 ### Output
 Return the result of the fully connected layer.
 
@@ -169,28 +181,41 @@ Return the result of the fully connected layer.
 
 #### 3. Describe how you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
 
-To train the model, I used an Multi layer Convulutional nueral network with kernel size 5x5 and stride 1x1 with `VALID` Padding . Learning rate = 0.0009 , epoch = 60 , batch size = 100. I tried with starting with parameters values  like Learning rate = 0.001 , epoch = 20 , batch size = 128 as we had done in LeNet Labs but accuracy was between 85-90 % . Tried playing around with parameters found above ones as good results . While i had got results in epoch = 20 as 95 % in training with higher epoch i got better results and before data augmentations the results were not that good as the classes were in equally balanced , so i needed to add some data to classes which had low training data and balance classes.In addition to this i hadve used RELU and dropout layers for better results .Last but not the least for Optimization i have used ADAM optimizer which is really popular for optimizing on such tasks
+To train the model, I used an Multi layer Convulutional nueral network with kernel size 5x5 and stride 1x1 with `VALID` Padding . Learning rate = 0.0001 , epoch = 65 , batch size = 100. I tried with starting with parameters values  like Learning rate = 0.0001 , epoch = 20 , batch size = 128 as we had done in LeNet Labs but accuracy was between 85-90 % . Tried playing around with parameters found above ones as good results . While i had got results in epoch = 20 as 95 % in training with higher epoch i got better results and before data augmentations the results were not that good as the classes were in equally balanced , so i needed to add some data to classes which had low training data and balance classes.In addition to this i hadve used RELU and dropout layers for better results .Last but not the least for Optimization i have used ADAM optimizer which is really popular for optimizing on such tasks. Previously model was overfitting so i had to tune model with parameter so that it should not over fit training data .
+I used dropout layer and tuned parameter keep_prob ,learning rate epoch for getting greater generalization on model .
+i had reduced learning rate and had checked performance of model on various epoch's to check how well it is doing .
 
+Here is plot of epoch vs training accuracy and validation accuracy .
+
+![Tuned Model Accuracy plot][image14]
+
+I had started with checking accuracy and loss values on various epoch's and stopped where the validation accuracy plateau's . from 60th to 65th epoch we don't have much increase in training as well as validation accuracy . I have iplemented a condition in code as to when validation accuracy plateu's or decreases we need to stop training . This code is written in section "Train Model" . While i had tried previously with manual interaction and expermentation that after 
 
 
 #### 4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
 
 My final model results were:
-* training set accuracy of 1.00
-* validation set accuracy of 97.1
-* test set accuracy of 94.7
+* training set accuracy of 96.9
+* validation set accuracy of 93.8
+* test set accuracy of 92.5
 
 If an iterative approach was chosen:
 * What was the first architecture that was tried and why was it chosen?
-    Basic Lenet architecture with 2 convolutional neural network layers and one 2 fully connected layers 
+    Lenet architecture was chosen for this projet as it has been used  previously for similar task of image classificatio giving good results .
 * What were some problems with the initial architecture?
-    Lower accuracy as less no of layers were present . 
+    Lower accuracy as less no of layers were present . Model was overfitting to training data  
 * How was the architecture adjusted and why was it adjusted? 
-    Lowered the learning rate .Increased the epoch and reduced the batch size . Included Dropout layer as a part of regularization technique . Previous architecture was over fitting on data hence we were getting lower accuracy on validation set.
-
+    Lowered the learning rate .Increased the epoch and reduced the batch size . Included Dropout layer as a part of regularization technique . Previous architecture was over fitting on data hence we were higher accuracy on training set and  getting lower accuracy on validation set.
 
 * Which parameters were tuned? How were they adjusted and why?
-    Learning rate , epoch , batch_size , No. of convulation layers .Above mentioned parameters were tried and tested on validation with various values and best resulting values were kept in final model to achieve best results 
+    Learning rate , epoch , batch_size , No. of convulation layers .Above mentioned parameters were tried and tested on validation with various values and best resulting values were kept in final model to achieve best results .
+
+Why it was adjusted :
+---
+    Learning rate - as learning rate directly effects calculating change in weights when back-propogating 
+    epoch - As no of epoch means no of times we are going through the data in forward-pass and backward pass . So it is important to choose well as lower or highering epoch can make changes in model
+    batch_size -As Batch - size defines how much data at a time in memory so we need to modify as per our memory capacity
+    keep_prob -  as in drop out we need to mention the amount of neurons we need to skip while calculations . this prameter has impact on training model
     
 * What are some of the important design choices and why were they chosen? For example, why might a convolution layer work well with this problem? How might a dropout layer help with creating a successful model?
     Choosing the perfect kernel,filter,strides for Covolutional Nueral Network are some of important decision choices as they can help getting desired results out of input images.Dropouts can help in reducing the dependencies on activation outputs . Our model gets less dependent on input from activation outputs and keeps redundant values to learn for better predictions .
@@ -213,7 +238,27 @@ Here are six German traffic signs that I found on the web:
 
 ![Test images from internet][image7]
 
+Qualities that might be difficult to classify a image are discussed below:
 
+Image 1 : The white strip part in can be common to other images in training but shape and edges for this image can be detected as shape is unique it has positive point on that.
+
+Image 2 : There are many similar image like this only the central portion can be different in each signs . Background can be varying in each case . So Background and similarity can be the qualities which can cause difficulty in classification. 
+
+Image 3 : The arrow part can be similar to other images but as image sign has its different shape , it can be distinguished and similar shapes may get confused in classification .
+
+Image 4 : As many images have similar edges and shapes of triangular boundary with red as dark part and white as light part that can be a similarity to other images . 
+
+Image 5 : Similar boundary conditions and similar shape can affect the classification of such images .
+
+Image 6 : In this image we have outer circle dark and inner white which is similar to many images with many similar no's as "0" is part of 30,40,20,120 so if in lighting conditions image is unclear it can cause an mis-classification
+
+Above were few points which i considerd major points are :
+Boundaries / edges
+Similar shapes 
+Lightinig conditions 
+image distortion 
+
+There can be many more conditions if more variety of images is considered  .
 
 #### 2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
 
@@ -221,84 +266,85 @@ Here are the results of the prediction:
 
 ![Test images with softmax][image8]
 
+![Test images with softmax Chart][image11]
+
 The model was able to correctly guess 5 of the 5 traffic signs, which gives an accuracy of 100%.
+The results were in range of above 90's which are very similar to test set which means model is performing well on external images from set of train and validation and test . While there can be similarity in images which can be classified similarly but dominant probability was for correct classified image .
 
 #### 3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
 
-The code for making predictions on my final model is located in the 11th cell of the Ipython notebook.
+The code for making predictions on my final model is located in the 2nd last and last cell of the Ipython notebook.
 
 Input Image label  (12, b'Priority road')
 ----------------------------------------
     1st Guess :Priority road(12)
-    100.%
+    99.9%
 
     2nd Guess :Roundabout mandatory(40)
-    4.73%
+    0.02%
 
-    3rd Guess :Turn left ahead(34)
-    3.57%
-
-    4th Guess :Turn left ahead(34)
+    3rd Guess :No vehicles(15)
     5.15%
 
-    5th Guess :Turn left ahead(34)
-    1.78%
+    4th Guess :No vehicles(15)
+    6.07%
+
+    5th Guess :No vehicles(15)
+    3.35%
 
 ----------------------------------------
-
 Input Image label  (18, b'General caution')
 ----------------------------------------
     1st Guess :General caution(18)
-    100.%
+    91.6%
 
-    2nd Guess :Pedestrians(27)
-    1.05%
+    2nd Guess :Traffic signals(26)
+    7.64%
 
-    3rd Guess :Traffic signals(26)
-    3.83%
+    3rd Guess :Pedestrians(27)
+    0.70%
 
-    4th Guess :Traffic signals(26)
-    1.98%
+    4th Guess :Pedestrians(27)
+    0.00%
 
-    5th Guess :Traffic signals(26)
-    0.0%
+    5th Guess :Pedestrians(27)
+    0.00%
 
 ----------------------------------------
-
 Input Image label  (34, b'Turn left ahead')
 ----------------------------------------
     1st Guess :Turn left ahead(34)
-    100.%
+    99.9%
 
     2nd Guess :Keep right(38)
-    5.50%
+    0.00%
 
-    3rd Guess :No vehicles(15)
-    4.81%
+    3rd Guess :Children crossing(28)
+    0.00%
 
-    4th Guess :No vehicles(15)
-    1.16%
+    4th Guess :Children crossing(28)
+    0.00%
 
-    5th Guess :No vehicles(15)
-    2.79%
+    5th Guess :Children crossing(28)
+    0.00%
 
 ----------------------------------------
 Input Image label  (11, b'Right-of-way at the next intersection')
 ----------------------------------------
     1st Guess :Right-of-way at the next intersection(11)
-    100.%
+    83.5%
 
     2nd Guess :Beware of ice/snow(30)
-    1.14%
+    16.4%
 
-    3rd Guess :Double curve(21)
-    6.98%
+    3rd Guess :Children crossing(28)
+    0.00%
 
-    4th Guess :Double curve(21)
-    1.56%
+    4th Guess :Children crossing(28)
+    0.00%
 
-    5th Guess :Double curve(21)
-    5.58%
+    5th Guess :Children crossing(28)
+    0.00%
 
 ----------------------------------------
 Input Image label  (38, b'Keep right')
@@ -307,34 +353,34 @@ Input Image label  (38, b'Keep right')
     100.%
 
     2nd Guess :Turn left ahead(34)
-    2.24%
+    4.26%
 
     3rd Guess :Speed limit (20km/h)(0)
-    0.0%
+    3.66%
 
     4th Guess :Speed limit (20km/h)(0)
-    0.0%
+    1.74%
 
     5th Guess :Speed limit (20km/h)(0)
-    0.0%
+    1.36%
 
 ----------------------------------------
 Input Image label  (1, b'Speed limit (30km/h)')
 ----------------------------------------
     1st Guess :Speed limit (30km/h)(1)
-    98.5%
+    99.8%
 
-    2nd Guess :Speed limit (20km/h)(0)
-    1.43%
+    2nd Guess :Speed limit (50km/h)(2)
+    0.12%
 
-    3rd Guess :Speed limit (80km/h)(5)
-    1.14%
+    3rd Guess :Speed limit (20km/h)(0)
+    0.03%
 
-    4th Guess :Speed limit (80km/h)(5)
-    6.76%
+    4th Guess :Speed limit (20km/h)(0)
+    0.01%
 
-    5th Guess :Speed limit (80km/h)(5)
-    1.87%
+    5th Guess :Speed limit (20km/h)(0)
+    0.00%
 
 ----------------------------------------
 
